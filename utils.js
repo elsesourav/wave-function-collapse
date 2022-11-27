@@ -1,0 +1,800 @@
+"use strict"
+let cvsw = 0;
+let cvsh = 0;
+const cvs = document.createElement("canvas");
+const ctx = cvs.getContext("2d");
+
+const canvasSize = (width, height) => {
+   cvsw = width; cvsh = height;
+   document.body.appendChild(cvs);
+   cvs.setAttribute("width", cvsw);
+   cvs.setAttribute("height", cvsh);
+   cvs.style.width = `${cvsw}px`;
+   cvs.style.height = `${cvsh}px`;
+};
+
+
+/* ---------- math ---------- */
+const PI = Math.PI;
+const sin = x => Math.sin(x);
+const cos = y => Math.cos(y);
+const atan2 = (y, x) => Math.atan2(y, x);
+const abs = n => Math.abs(n);
+
+const toRadian = degree => (degree * Math.PI) / 180;// degree convert to radian
+const toDegree = radian => (radian * 180) / Math.PI;// radian convert to Degree
+
+const random = (start = 0, end = 1, int_floor = false) => {
+   const result = start + (Math.random() * (end - start));
+   return int_floor ? Math.floor(result) : result;
+}
+
+/* e.x 
+(0 start) -------.------ (10 end) input . = 5
+(10 min) ----------------.---------------- (30 max) output . = 20
+*/
+const map = (point, start, end, min, max) => {
+   const per = (point - start) / (end - start);
+   return ((max - min) * per) + min;
+}
+
+const __getColor__ = (r, g, b, a) => {
+   if (typeof r === "string") {
+      return r;
+   } else if ((a || a === 0) && (b || b === 0) && (g || g === 0) && (r || r === 0)) {
+      return `rgba(${r}, ${g}, ${b}, ${a})`;
+   } else if (!a && !b && !g && (r || r === 0)) {
+      return `rgba(${r}, ${r}, ${r}, ${1})`;
+   } else {
+      return `rgba(${r}, ${g}, ${b}, ${1})`;
+   }
+}
+
+
+/* ------------- canvas ------------ */
+const color = (red, green, blue, alpha) => {
+   return __getColor__(red, green, blue, alpha);
+}
+const fill = (red, green, blue, alpha) => {
+   ctx.fillStyle = __getColor__(red, green, blue, alpha);
+   ctx.fill();
+}
+const fillStyle = (red, green, blue, alpha) => {
+   ctx.fillStyle = __getColor__(red, green, blue, alpha);
+}
+
+const strokeStyle = (red, green, blue, alpha) => {
+   ctx.strokeStyle = __getColor__(red, green, blue, alpha);
+}
+
+const background = (red, green, blue, alpha) => {
+   ctx.fillStyle = __getColor__(red, green, blue, alpha);
+   ctx.fillRect(0, 0, cvs.width, cvs.height);
+}
+
+const clrScr = () => {
+   ctx.clearRect(0, 0, cvs.width, cvs.height);
+}
+const clearRect = (x = 0, y = 0, w = cvs.width, h = cvs.height) => {
+   ctx.clearRect(x, y, w, h);
+}
+const translate = (x, y) => {
+   ctx.translate(x, y);
+}
+const translateX = (x) => {
+   ctx.translate(x, 0);
+}
+const translateY = (y) => {
+   ctx.translate(0, y);
+}
+const transform = (ox, nx, oy, ny) => {
+   ctx.transform(ox, nx, oy, ny);
+}
+const font = (font) => {
+   ctx.font = font;
+   ctx.textAlign = "center";
+}
+const text = (text, x, y, w) => {
+   ctx.fillText(text, x, y, w);
+}
+const save = () => {
+   ctx.save();
+}
+const restore = () => {
+   ctx.restore();
+}
+const rotate = (angle) => {
+   ctx.rotate(angle);
+}
+const scale = (x, y) => ctx.scale(x, y);
+const scaleX = (x) => ctx.scale(x, 0);
+const scaleY = (y) => ctx.scale(0, y);
+
+const lineWidth = (width) => ctx.lineWidth = width;
+
+
+// const line = (sx, sy, ex, ey) => {
+//   ctx.moveTo(sx, sy);
+//   ctx.lineTo(ex, ey);
+// }
+
+const rounLline = (sx, sy, ex, ey, width = 1, lineDash = []) => {
+   ctx.beginPath();
+   ctx.lineWidth = width;
+   ctx.lineCap = "round";
+   ctx.lineJoin = "round";
+
+   lineDash && ctx.setLineDash(lineDash);
+   ctx.moveTo(sx, sy);
+   ctx.lineTo(ex, ey);
+   ctx.stroke();
+   ctx.closePath();
+}
+const beginPath = () => ctx.beginPath();
+const closePath = () => ctx.closePath();
+
+const moveTo = (x, y) => {
+   ctx.beginPath();
+   ctx.moveTo(x, y);
+};
+
+const stroke = (red, green, blue, alpha) => {
+   ctx.strokeStyle = __getColor__(red, green, blue, alpha);
+   ctx.stroke();
+}
+const lineTo = (x, y) => ctx.lineTo(x, y);
+
+const curve = (sx, sy, ex, ey, lineWidth = 1, radius = 20, fill = false) => {
+   ctx.beginPath();
+   ctx.lineWidth = lineWidth;
+   ctx.moveTo(sx, sy);
+   const midx = sx + (ex - sx) / 2;
+   const midy = sy + (ey - sy) / 2;
+   ctx.quadraticCurveTo(midx, midy - radius, ex, ey);
+   ctx.stroke();
+   fill && ctx.fill();
+   ctx.closePath();
+}
+
+const rect = (x, y, w, h) => {
+   ctx.rect(x, y, w, h);
+}
+
+const fillRect = (x, y, w, h) => {
+   ctx.beginPath();
+   ctx.fillRect(x, y, w, h);
+   ctx.closePath();
+}
+const arc = (x, y, r, fill = true, lineWidth = 0) => {
+   ctx.beginPath();
+   const nr = lineWidth ? r - lineWidth : r;
+   ctx.arc(x, y, nr, 0, PI * 2, false);
+   fill && ctx.fill();
+   ctx.lineWidth = lineWidth;
+   lineWidth && ctx.stroke();
+   ctx.closePath();
+}
+
+
+const _$ = (givMe) => {
+   const self = document.querySelectorAll(givMe);
+   self.T = (text) => {
+      self.forEach((all) => {
+         all.innerText = text;
+      });
+   };
+   self.O = (event, fun) => {
+      self.forEach((all) => {
+         all.addEventListener(event, fun);
+      });
+   };
+   self.S = (object) => {
+      const css = Object.entries(object);
+      self.forEach((all) => {
+         css.forEach(([prorerty, value]) => {
+            all.style[prorerty] = value;
+         });
+      });
+   };
+   return self;
+};
+
+// return Id
+const ID = (id) => {
+   const self = document.getElementById(id);
+   self.on = (event, fun) => {
+      self.addEventListener(event, fun);
+   };
+   return self;
+};
+
+// class add in html
+function addClass(array, className = "active") {
+   if (array.length == undefined) {
+      array.classList.forEach(() => array.classList.add(className));
+   } else {
+      array.forEach((element) => element.classList.add(className));
+   }
+}
+
+// claass remove in html
+function removeClass(array, className = "active") {
+   if (array.length == undefined) {
+      array.classList.forEach(() => array.classList.remove(className));
+   } else {
+      array.forEach((element) => element.classList.remove(className));
+   }
+}
+
+const createEle = (elementName, className = null, appendParentName = null, inrHtml = null) => {
+   const e = document.createElement(elementName);
+   if (className) e.classList.add(className);
+   if (inrHtml) e.innerHTML = inrHtml;
+   if (appendParentName) appendParentName.appendChild(e);
+   e.on = (event, callBackFun) => {
+      if (typeof event != "string") {
+         e.addEventListener("click", event);
+      } else {
+         e.addEventListener(event, callBackFun);
+      }
+   }
+   return e;
+}
+
+const isMobile = localStorage.mobile || window.navigator.maxTouchPoints > 1;
+function hover(element) {
+   element.classList.add("hover-n");
+   element.classList.remove("hover");
+
+   const addHover = () => {
+      element.classList.add("hover");
+      element.classList.remove("hover-n");
+   }
+   const removeHover = () => {
+      element.classList.remove("hover");
+      element.classList.add("hover-n");
+   }
+   element.addEventListener("touchstart", () => {
+      isMobile && addHover();
+   });
+   element.addEventListener("mouseenter", () => {
+      !isMobile && addHover();
+   });
+
+   element.addEventListener("touchend", () => {
+      isMobile && removeHover();
+   });
+   element.addEventListener("mouseleave", () => {
+      !isMobile && removeHover();
+   });
+}
+
+
+function setDataToLocalStorage(key, object) {
+   var data = JSON.stringify(object);
+   localStorage.setItem(key, data);
+}
+function getDataToLocalStorage(key) {
+   return JSON.parse(localStorage.getItem(key))
+}
+
+class Animation {
+   constructor(fps) {
+      this.fps = fps;
+      this.run = false;
+   }
+
+   animate(fun) {
+      setTimeout(() => {
+         if (this.run) {
+            fun();
+            this.animate(fun);
+         }
+      }, 1000 / this.fps);
+   }
+
+   start(fun) {
+      this.run = true;
+      this.animate(fun);
+   }
+
+   stop() {
+      this.run = false;
+   }
+}
+
+
+/* --------------- image pattern ----------------- */
+// const r = "#f00";
+// const d = "#000";
+// const g = "#0f0";
+// const b = "#00f";
+// const w = "#fff";
+// const m = "#0ff";
+
+const g = "#bf9d85"; // clay
+const b = "#000000"; // black
+const G = "#348C31"; // grass
+const s = "#1a62ff"; // samudro
+
+
+
+// const ptn = [
+//    [
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, 0, r, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, 0, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, g, g, g],
+//       [0, 0, 0, g, g, g, g, g, g],
+//       [0, 0, 0, g, g, g, g, g, g]
+//    ],
+//    [
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, 0, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, 0, r, 0, 0, 0, 0],
+//       [0, 0, 0, 0, r, 0, 0, 0, 0],
+//       [0, r, r, r, r, r, r, r, 0],
+//       [0, r, 0, 0, 0, 0, 0, r, 0],
+//       [0, r, 0, 0, 0, 0, 0, r, 0],
+//       [0, r, 0, 0, 0, 0, 0, r, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, w, w, w, w, w, w, w, 0],
+//       [r, 0, 0, 0, 0, 0, 0, 0, r],
+//       [r, 0, 0, 0, 0, 0, 0, 0, r],
+//       [r, 0, 0, 0, 0, 0, 0, 0, r] 
+//    ], 
+// ]
+// const ptn = [
+//    [
+//       [0, 0, 0],
+//       [0, 0, 0],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, w],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, g, 0],
+//       [w, w, w],
+//       [0, g, 0]
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, 0],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, w, 0],
+//       [0, w, 0],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, w, 0],
+//       [0, 0, 0],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, g, 0],
+//       [0, w, 0],
+//       [0, w, 0]
+//    ],  
+//    [
+//       [w, w, w],
+//       [w, 0, w],
+//       [w, 0, w]
+//    ],
+// ]
+
+// const ptn = [
+//    [
+//       [0, 0, 0],
+//       [0, 0, 0],
+//       [0, 0, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, 0],
+//       [0, w, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [0, w, 0],
+//       [0, w, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, 0],
+//       [0, 0, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, r, w],
+//       [0, w, 0],
+//    ],
+// ]
+
+// const ptn = [
+//    [
+//       [0, 0, 0],
+//       [0, 0, 0],
+//       [0, 0, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [0, w, 0],
+//       [0, w, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, w],
+//       [0, w, 0],
+//    ],
+// ]
+
+// const ptn = [
+//    [
+//       [w, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, w],
+//    ],
+//    [
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [r, 0, 0, 0, 0, 0, 0],
+//       [0, r, 0, 0, 0, 0, 0],
+//       [0, 0, r, 0, 0, 0, 0],
+//       [b, 0, 0, r, 0, 0, 0],
+//    ],
+//    [
+//       [w, 0, 0, 0, 0, 0, w],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [r, r, r, r, r, r, r],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [b, 0, 0, 0, 0, 0, b],
+//    ],
+//    [
+//       [b, 0, 0, r, 0, 0, w],
+//       [0, 0, 0, 0, r, 0, 0],
+//       [0, 0, 0, 0, 0, r, 0],
+//       [r, 0, 0, 0, 0, 0, r],
+//       [0, r, 0, 0, 0, 0, 0],
+//       [0, 0, r, 0, 0, 0, 0],
+//       [w, 0, 0, r, 0, 0, b],
+//    ],
+//    [
+//       [b, 0, 0, r, 0, 0, w],
+//       [0, 0, 0, 0, r, 0, 0],
+//       [0, 0, 0, 0, 0, r, 0],
+//       [0, 0, 0, 0, 0, 0, r],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [b, 0, 0, 0, 0, 0, b],
+//    ],
+//    [
+//       [b, 0, 0, 0, 0, 0, b],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [b, 0, 0, 0, 0, 0, b],
+//    ],
+
+// ]
+
+
+const ptn = [
+   [
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+   ],
+   [
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, b, g, g, g, g, g, g, g, g],
+      [G, G, G, G, G, b, g, g, g, g, g, g, g, g, g],
+      [b, b, b, b, b, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+   ],
+   [
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+   ],
+   [
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, b, G, G, G, G, G, G, G, G],
+      [b, b, b, b, b, b, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+   ],
+   [
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+      [G, G, G, G, G, G, b, g, g, g, g, g, g, g, g],
+      [G, G, G, G, G, b, g, g, g, g, g, g, g, g, g],
+      [b, b, b, b, b, g, g, g, g, g, b, b, b, b, b],
+      [g, g, g, g, g, g, g, g, g, b, G, G, G, G, G],
+      [g, g, g, g, g, g, g, g, b, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+   ],
+   [
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, b, G, G, G, G, G, G, G, G],
+      [b, b, b, b, b, b, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+   ],
+   [ 
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s], 
+      [G, G, G, G, G, G, b, s, s, s, s, s, s, s, s],
+      [b, b, b, b, b, b, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+   ],
+   [
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+   ],
+   [
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+   ],
+   [
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+      [G, G, G, G, G, G, b, s, s, s, s, s, s, s, s],
+      [G, G, G, G, G, b, s, s, s, s, s, s, s, s, s],
+      [b, b, b, b, b, s, s, s, s, s, b, b, b, b, b],
+      [s, s, s, s, s, s, s, s, s, b, G, G, G, G, G],
+      [s, s, s, s, s, s, s, s, b, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+   ],
+
+]
+
+function rotate2dArray(array) {
+   let ary = array.slice();
+   let row = ary.length;
+   let col = ary[0].length;
+   let nary = [];
+
+   // nary[i][j] fill with 0
+   for (let i = 0; i < col; i++) {
+      nary[i] = [];
+      for (let j = 0; j < row; j++) {
+         nary[i][j] = 0;
+      }
+   }
+
+   // rotate array into nary 
+   for (let i = 0; i < row; i++) {
+      for (let j = 0; j < col; j++) {
+         nary[j][row - 1 - i] = ary[i][j];
+      }
+   }
+
+   return nary;
+}

@@ -1,0 +1,19 @@
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   touch-action: none;
+   user-select: none;
+}
+body {
+   position: relative;
+   width: 100vw;
+   min-height: 100vh;
+   display: grid;
+   place-items: center;
+   overflow: hidden;
+   background: #2a2a3a;
+}
+.color {
+   color: #1a62ff;
+}
