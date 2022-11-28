@@ -7,7 +7,7 @@ let showPossibles = true;
 
 
 
-const unit = 20;
+const unit = 10;
 let board = [];
 
 function isExisteAndUnCollapsed(i, j) {
