@@ -1,40 +1,553 @@
-class ImagePiec {
-   constructor(imagePattern) {
-      this.pattern = [];
-      this.pattern[0] = imagePattern;
-      this.edges = [];
-
-      /* set top right bottom left edegs */
-      this.edges[0] = [];
-      // top
-      this.edges[0][0] = this.pattern[0][0];
-
-      // right
-      this.edges[0][1] = [];
-      for (let i = 0; i < this.pattern[0].length; i++) {
-         this.edges[0][1][i] = this.pattern[0][i][this.pattern[0][i].length - 1]
-
-      }
-      // bottom
-      this.edges[0][2] = this.pattern[0][this.pattern[0].length - 1];
-
-      // left
-      this.edges[0][3] = [];
-      for (let i = 0; i < this.pattern[0].length; i++)
-         this.edges[0][3][i] = this.pattern[0][i][0];
 
 
-      for (let i = 1; i < 4; i++) {
-         // edegs
-         this.edges[i] = [];
+/* 
 
-         this.edges[i][0] = this.edges[i - 1][3].slice();
-         this.edges[i][1] = this.edges[i - 1][0].slice();
-         this.edges[i][2] = this.edges[i - 1][1].slice();
-         this.edges[i][3] = this.edges[i - 1][2].slice();
+   let smallIndex = {i: 0, j: 0};
+   let smoll = 100000;
 
-         // pattens
-         this.pattern[i] = rotate2dArray(this.pattern[i - 1]);
+   for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+         let piec = board[i][j];
+
+         if (piec.possibles.length < smoll && !piec.selected) {
+            smoll = piec.possibles.length;
+            smallIndex.i = i;
+            smallIndex.j = j; 
+         }
       }
    }
-}
+
+   // console.log(smallIndex.j, smallIndex.i);
+   board[smallIndex.i][smallIndex.j].select();
+   neighberUpdate(smallIndex.i, smallIndex.j)
+   // console.log(board[smallIndex.i][smallIndex.j]);
+
+
+   // const r = "#f00";
+// const d = "#000";
+// const g = "#0f0";
+// const b = "#00f";
+// const w = "#fff";
+// const m = "#0ff";
+
+// const g = "#bf9d85"; // clay
+// const b = "#000000"; // black
+// const G = "#348C31"; // grass
+// const s = "#1a62ff"; // samudro
+
+
+
+// const ptn = [
+//    [
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, w, 0, 0, 0],
+//       [w, w, w, w, w, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, 0, r, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, 0, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
+//    ],
+//    [
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [g, g, g, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, g, g, g],
+//       [0, 0, 0, g, g, g, g, g, g],
+//       [0, 0, 0, g, g, g, g, g, g]
+//    ],
+//    [
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, g, g, g, 0, 0, 0],
+//       [0, 0, 0, 0, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, g, 0, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, r, r, r, 0, 0, 0],
+//       [0, 0, 0, 0, r, 0, 0, 0, 0],
+//       [0, 0, 0, 0, r, 0, 0, 0, 0],
+//       [0, r, r, r, r, r, r, r, 0],
+//       [0, r, 0, 0, 0, 0, 0, r, 0],
+//       [0, r, 0, 0, 0, 0, 0, r, 0],
+//       [0, r, 0, 0, 0, 0, 0, r, 0]
+//    ],
+//    [
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, w, w, w, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, 0, 0, 0, w, 0, 0, 0, 0],
+//       [0, w, w, w, w, w, w, w, 0],
+//       [r, 0, 0, 0, 0, 0, 0, 0, r],
+//       [r, 0, 0, 0, 0, 0, 0, 0, r],
+//       [r, 0, 0, 0, 0, 0, 0, 0, r] 
+//    ], 
+// ]
+// const ptn = [
+//    [
+//       [0, 0, 0],
+//       [0, 0, 0],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, w],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, g, 0],
+//       [w, w, w],
+//       [0, g, 0]
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, 0],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, w, 0],
+//       [0, w, 0],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, w, 0],
+//       [0, 0, 0],
+//       [0, 0, 0]
+//    ],
+//    [
+//       [0, g, 0],
+//       [0, w, 0],
+//       [0, w, 0]
+//    ],  
+//    [
+//       [w, w, w],
+//       [w, 0, w],
+//       [w, 0, w]
+//    ],
+// ]
+
+// const ptn = [
+//    [
+//       [0, 0, 0],
+//       [0, 0, 0],
+//       [0, 0, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, 0],
+//       [0, w, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [0, w, 0],
+//       [0, w, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, 0],
+//       [0, 0, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, r, w],
+//       [0, w, 0],
+//    ],
+// ]
+
+// const ptn = [
+//    [
+//       [0, 0, 0],
+//       [0, 0, 0],
+//       [0, 0, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [0, w, 0],
+//       [0, w, 0],
+//    ],
+//    [
+//       [0, w, 0],
+//       [w, w, w],
+//       [0, w, 0],
+//    ],
+// ]
+
+// const ptn = [
+//    [
+//       [w, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, w],
+//    ],
+//    [
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [r, 0, 0, 0, 0, 0, 0],
+//       [0, r, 0, 0, 0, 0, 0],
+//       [0, 0, r, 0, 0, 0, 0],
+//       [b, 0, 0, r, 0, 0, 0],
+//    ],
+//    [
+//       [w, 0, 0, 0, 0, 0, w],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [r, r, r, r, r, r, r],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [b, 0, 0, 0, 0, 0, b],
+//    ],
+//    [
+//       [b, 0, 0, r, 0, 0, w],
+//       [0, 0, 0, 0, r, 0, 0],
+//       [0, 0, 0, 0, 0, r, 0],
+//       [r, 0, 0, 0, 0, 0, r],
+//       [0, r, 0, 0, 0, 0, 0],
+//       [0, 0, r, 0, 0, 0, 0],
+//       [w, 0, 0, r, 0, 0, b],
+//    ],
+//    [
+//       [b, 0, 0, r, 0, 0, w],
+//       [0, 0, 0, 0, r, 0, 0],
+//       [0, 0, 0, 0, 0, r, 0],
+//       [0, 0, 0, 0, 0, 0, r],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [b, 0, 0, 0, 0, 0, b],
+//    ],
+//    [
+//       [b, 0, 0, 0, 0, 0, b],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [0, 0, 0, 0, 0, 0, 0],
+//       [b, 0, 0, 0, 0, 0, b],
+//    ],
+
+// ]
+
+
+// const ptn = [
+//     [
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//     ],
+//     [
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, b, g, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, b, g, g, g, g, g, g, g, g, g],
+//        [b, b, b, b, b, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//        [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
+//     ],
+//     [
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//     ],
+//     [
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, b, G, G, G, G, G, G, G, G],
+//        [b, b, b, b, b, b, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//     ],
+//     [
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, G, b, g, g, g, g, g, g, g, g],
+//        [G, G, G, G, G, b, g, g, g, g, g, g, g, g, g],
+//        [b, b, b, b, b, g, g, g, g, g, b, b, b, b, b],
+//        [g, g, g, g, g, g, g, g, g, b, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, g, b, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//        [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
+//     ],
+//     [
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, b, G, G, G, G, G, G, G, G],
+//        [b, b, b, b, b, b, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//        [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
+//     ],
+//     [
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, b, s, s, s, s, s, s, s, s],
+//        [b, b, b, b, b, b, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//     ],
+//     [
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//     ],
+//     [
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//        [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
+//     ],
+//     [
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, G, b, s, s, s, s, s, s, s, s],
+//        [G, G, G, G, G, b, s, s, s, s, s, s, s, s, s],
+//        [b, b, b, b, b, s, s, s, s, s, b, b, b, b, b],
+//        [s, s, s, s, s, s, s, s, s, b, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, s, b, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//        [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
+//     ],
+ 
+//  ]
+
+
+
+[
+        [1, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 1],
+     ],
+     [
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [2, 5, 5, 5, 5, 5, 5],
+        [5, 2, 5, 5, 5, 5, 5],
+        [5, 5, 2, 5, 5, 5, 5],
+        [4, 5, 5, 2, 5, 5, 5],
+     ],
+     [
+        [1, 5, 5, 5, 5, 5, 1],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [2, 2, 2, 2, 2, 2, 2],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [4, 5, 5, 5, 5, 5, 4],
+     ],
+     [
+        [4, 5, 5, 2, 5, 5, 1],
+        [5, 5, 5, 5, 2, 5, 5],
+        [5, 5, 5, 5, 5, 2, 5],
+        [2, 5, 5, 5, 5, 5, 2],
+        [5, 2, 5, 5, 5, 5, 5],
+        [5, 5, 2, 5, 5, 5, 5],
+        [1, 5, 5, 2, 5, 5, 4],
+     ],
+     [
+        [4, 5, 5, 2, 5, 5, 1],
+        [5, 5, 5, 5, 2, 5, 5],
+        [5, 5, 5, 5, 5, 2, 5],
+        [5, 5, 5, 5, 5, 5, 2],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [4, 5, 5, 5, 5, 5, 4],
+     ],
+     [
+        [4, 5, 5, 5, 5, 5, 4],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [5, 5, 5, 5, 5, 5, 5],
+        [4, 5, 5, 5, 5, 5, 4],
+     ],
+
+*/

@@ -1,65 +1,60 @@
-
-
-
-let patterns = [];
-
-
-
-
-// create pattern opbjet
-for (let i = 0; i < ptn.length; i++) {
-   patterns.push(new ImagePiec(ptn[i]))
-}
-
-
 // make a new image using array
 class Piec {
-   constructor(x, y, width, height, index, rowIndex) {
+   constructor(x, y, width, height, images, i, j) {
       this.x = x;
       this.y = y;
       this.width = width;
       this.height = height;
-      this.ri = 0; // rotate index
-      this.pattern = [];
-      this.edges;
-      this.index = index;
-      this._use = false;
-      this.rowIndex = rowIndex;
+      this.possibles = images;
+      this.collapsed = false;
+      this.i = i;
+      this.j = j;
+      this.out = false;
    }
 
    draw() {
-      if (this._use) {
-         let pxw = this.width / this.pattern[this.ri][0].length;
-         let pxh = this.height / this.pattern[this.ri].length;
+      if (this.collapsed) {
+         drawImage(this.possibles[0].img, this.x, this.y, this.width, this.height);
+      }
 
-         for (let y = 0; y < this.pattern[this.ri].length; y++) {
-            for (let x = 0; x < this.pattern[this.ri][y].length; x++) {
-               if (this.pattern[this.ri][y][x]) fillStyle(this.pattern[this.ri][y][x]);
-               else fillStyle("#000000");
-               fillRect(this.x + x * pxw, this.y + y * pxh, pxw, pxh);
-            }
+
+
+
+      // if (this.collapsed) {
+      //    // drawImage(this.possibles[0].img, this.x, this.y, this.width, this.height);
+      // }
+      // else {
+      //    lineWidth(0.5);
+      //    stroke("#00ffff"); 
+      //    rect(this.x, this.y, this.width, this.height);
+      // }
+   }
+
+   showPossibles() {
+      if (this.out && !this.collapsed) {
+         let textSize = this.width * this.height / 100;
+         textSize = textSize > 50 ? 50 : textSize;
+         if (textSize > 5) {
+            fillStyle("#000000");
+            font(`${textSize}px sans-serif`)
+            text(this.possibles.length, this.x + this.width / 2, this.y + this.height / 2, this.width, this.height)
          }
-      } else {
-         lineWidth(1);
-         rect(this.x, this.y, this.width, this.height);
-         stroke("#00ffff")
+
+         
       }
    }
 
-   use(pattern, rotateIndex) {
-      this.ri = rotateIndex;
-      this.edges = pattern.edges;
-      this.pattern = pattern.pattern;
-      this._use = true;
+
+   collapse() {
+      let rnd = random(0, this.possibles.length, true);
+      this.possibles = [this.possibles[rnd]];
+      this.collapsed = true;
    }
 
-   isUse() {
-      return this._use;
+   isSelected() {
+      return this.collapsed;
    }
-
 }
-
-
 
 
 

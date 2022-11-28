@@ -4,6 +4,8 @@ let cvsh = 0;
 const cvs = document.createElement("canvas");
 const ctx = cvs.getContext("2d");
 
+
+
 const canvasSize = (width, height) => {
    cvsw = width; cvsh = height;
    document.body.appendChild(cvs);
@@ -12,7 +14,14 @@ const canvasSize = (width, height) => {
    cvs.style.width = `${cvsw}px`;
    cvs.style.height = `${cvsh}px`;
 };
+/* ------------------------------------------------------------ */
+let windowWidth = window.innerWidth;
+let windowHeight = window.innerHeight;
+let size = windowWidth > windowHeight ? windowHeight : windowWidth;
 
+size = Math.floor(size / 100) * 100;
+canvasSize(size, size); 
+/* ------------------------------------------------------------- */
 
 /* ---------- math ---------- */
 const PI = Math.PI;
@@ -175,7 +184,11 @@ const arc = (x, y, r, fill = true, lineWidth = 0) => {
    ctx.closePath();
 }
 
-
+const getImageData = (sx, sy, sw, sh) => ctx.getImageData(sx, sy, sw, sh);
+const putImageData = (image, dx, dy) => ctx.putImageData(image, dx, dy);
+const toDataURL = () => ctx.toDataURL("image/jpeg");
+const drawImage = (image, x, y, w, h) => ctx.drawImage(image, x, y, w, h);
+ 
 const _$ = (givMe) => {
    const self = document.querySelectorAll(givMe);
    self.T = (text) => {
@@ -241,6 +254,8 @@ const createEle = (elementName, className = null, appendParentName = null, inrHt
    return e;
 }
 
+
+
 const isMobile = localStorage.mobile || window.navigator.maxTouchPoints > 1;
 function hover(element) {
    element.classList.add("hover-n");
@@ -304,477 +319,7 @@ class Animation {
 }
 
 
-/* --------------- image pattern ----------------- */
-// const r = "#f00";
-// const d = "#000";
-// const g = "#0f0";
-// const b = "#00f";
-// const w = "#fff";
-// const m = "#0ff";
-
-const g = "#bf9d85"; // clay
-const b = "#000000"; // black
-const G = "#348C31"; // grass
-const s = "#1a62ff"; // samudro
-
-
-
-// const ptn = [
-//    [
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
-//    ],
-//    [
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [w, w, w, w, w, w, 0, 0, 0],
-//       [w, w, w, w, w, w, 0, 0, 0],
-//       [w, w, w, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0]
-//    ],
-//    [
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, w, w, w, w, 0, 0, 0],
-//       [w, w, w, w, w, w, 0, 0, 0],
-//       [w, w, w, w, w, w, 0, 0, 0],
-//       [w, w, w, w, w, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
-//    ],
-//    [
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, g, g, g, g, 0, 0, 0],
-//       [g, g, g, g, g, g, 0, 0, 0],
-//       [g, g, g, g, g, g, 0, 0, 0],
-//       [g, g, g, g, g, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
-//    ],
-//    [
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, g, g, g, 0, 0, 0]
-//    ],
-//    [
-//       [0, 0, 0, r, r, r, 0, 0, 0],
-//       [0, 0, 0, r, r, r, 0, 0, 0],
-//       [0, 0, 0, r, r, r, 0, 0, 0],
-//       [0, 0, 0, r, r, r, 0, 0, 0],
-//       [0, 0, 0, 0, r, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
-//    ],
-//    [
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, 0, w, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
-//    ],
-//    [
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, 0, g, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0, 0, 0]
-//    ],
-//    [
-//       [g, g, g, g, g, g, 0, 0, 0],
-//       [g, g, g, g, g, g, 0, 0, 0],
-//       [g, g, g, g, g, g, 0, 0, 0],
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, g, g, g, g, g, g],
-//       [0, 0, 0, g, g, g, g, g, g],
-//       [0, 0, 0, g, g, g, g, g, g]
-//    ],
-//    [
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, g, g, g, 0, 0, 0],
-//       [0, 0, 0, 0, g, 0, 0, 0, 0],
-//       [0, 0, 0, 0, g, 0, 0, 0, 0],
-//       [0, 0, 0, 0, g, 0, 0, 0, 0],
-//       [0, 0, 0, 0, w, 0, 0, 0, 0],
-//       [0, 0, 0, 0, w, 0, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0]
-//    ],
-//    [
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, r, r, r, 0, 0, 0],
-//       [0, 0, 0, r, r, r, 0, 0, 0],
-//       [0, 0, 0, 0, r, 0, 0, 0, 0],
-//       [0, 0, 0, 0, r, 0, 0, 0, 0],
-//       [0, r, r, r, r, r, r, r, 0],
-//       [0, r, 0, 0, 0, 0, 0, r, 0],
-//       [0, r, 0, 0, 0, 0, 0, r, 0],
-//       [0, r, 0, 0, 0, 0, 0, r, 0]
-//    ],
-//    [
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, w, w, w, 0, 0, 0],
-//       [0, 0, 0, 0, w, 0, 0, 0, 0],
-//       [0, 0, 0, 0, w, 0, 0, 0, 0],
-//       [0, w, w, w, w, w, w, w, 0],
-//       [r, 0, 0, 0, 0, 0, 0, 0, r],
-//       [r, 0, 0, 0, 0, 0, 0, 0, r],
-//       [r, 0, 0, 0, 0, 0, 0, 0, r] 
-//    ], 
-// ]
-// const ptn = [
-//    [
-//       [0, 0, 0],
-//       [0, 0, 0],
-//       [0, 0, 0]
-//    ],
-//    [
-//       [0, w, 0],
-//       [w, w, w],
-//       [0, 0, 0]
-//    ],
-//    [
-//       [0, g, 0],
-//       [w, w, w],
-//       [0, g, 0]
-//    ],
-//    [
-//       [0, w, 0],
-//       [w, w, 0],
-//       [0, 0, 0]
-//    ],
-//    [
-//       [0, w, 0],
-//       [0, w, 0],
-//       [0, 0, 0]
-//    ],
-//    [
-//       [0, w, 0],
-//       [0, 0, 0],
-//       [0, 0, 0]
-//    ],
-//    [
-//       [0, g, 0],
-//       [0, w, 0],
-//       [0, w, 0]
-//    ],  
-//    [
-//       [w, w, w],
-//       [w, 0, w],
-//       [w, 0, w]
-//    ],
-// ]
-
-// const ptn = [
-//    [
-//       [0, 0, 0],
-//       [0, 0, 0],
-//       [0, 0, 0],
-//    ],
-//    [
-//       [0, w, 0],
-//       [w, w, 0],
-//       [0, w, 0],
-//    ],
-//    [
-//       [0, w, 0],
-//       [0, w, 0],
-//       [0, w, 0],
-//    ],
-//    [
-//       [0, w, 0],
-//       [w, w, 0],
-//       [0, 0, 0],
-//    ],
-//    [
-//       [0, w, 0],
-//       [w, r, w],
-//       [0, w, 0],
-//    ],
-// ]
-
-// const ptn = [
-//    [
-//       [0, 0, 0],
-//       [0, 0, 0],
-//       [0, 0, 0],
-//    ],
-//    [
-//       [0, w, 0],
-//       [0, w, 0],
-//       [0, w, 0],
-//    ],
-//    [
-//       [0, w, 0],
-//       [w, w, w],
-//       [0, w, 0],
-//    ],
-// ]
-
-// const ptn = [
-//    [
-//       [w, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, w],
-//    ],
-//    [
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [r, 0, 0, 0, 0, 0, 0],
-//       [0, r, 0, 0, 0, 0, 0],
-//       [0, 0, r, 0, 0, 0, 0],
-//       [b, 0, 0, r, 0, 0, 0],
-//    ],
-//    [
-//       [w, 0, 0, 0, 0, 0, w],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [r, r, r, r, r, r, r],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [b, 0, 0, 0, 0, 0, b],
-//    ],
-//    [
-//       [b, 0, 0, r, 0, 0, w],
-//       [0, 0, 0, 0, r, 0, 0],
-//       [0, 0, 0, 0, 0, r, 0],
-//       [r, 0, 0, 0, 0, 0, r],
-//       [0, r, 0, 0, 0, 0, 0],
-//       [0, 0, r, 0, 0, 0, 0],
-//       [w, 0, 0, r, 0, 0, b],
-//    ],
-//    [
-//       [b, 0, 0, r, 0, 0, w],
-//       [0, 0, 0, 0, r, 0, 0],
-//       [0, 0, 0, 0, 0, r, 0],
-//       [0, 0, 0, 0, 0, 0, r],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [b, 0, 0, 0, 0, 0, b],
-//    ],
-//    [
-//       [b, 0, 0, 0, 0, 0, b],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [0, 0, 0, 0, 0, 0, 0],
-//       [b, 0, 0, 0, 0, 0, b],
-//    ],
-
-// ]
-
-
-const ptn = [
-   [
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-   ],
-   [
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, b, g, g, g, g, g, g, g, g],
-      [G, G, G, G, G, b, g, g, g, g, g, g, g, g, g],
-      [b, b, b, b, b, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-      [g, g, g, g, g, g, g, g, g, g, g, g, g, g, g],
-   ],
-   [
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-   ],
-   [
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, b, G, G, G, G, G, G, G, G],
-      [b, b, b, b, b, b, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-   ],
-   [
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, G, b, g, g, g, g, g, g, g],
-      [G, G, G, G, G, G, b, g, g, g, g, g, g, g, g],
-      [G, G, G, G, G, b, g, g, g, g, g, g, g, g, g],
-      [b, b, b, b, b, g, g, g, g, g, b, b, b, b, b],
-      [g, g, g, g, g, g, g, g, g, b, G, G, G, G, G],
-      [g, g, g, g, g, g, g, g, b, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-      [g, g, g, g, g, g, g, b, G, G, G, G, G, G, G],
-   ],
-   [
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, b, G, G, G, G, G, G, G, G],
-      [b, b, b, b, b, b, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-      [G, G, G, G, G, G, G, G, G, G, G, G, G, G, G],
-   ],
-   [ 
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s], 
-      [G, G, G, G, G, G, b, s, s, s, s, s, s, s, s],
-      [b, b, b, b, b, b, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-   ],
-   [
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-   ],
-   [
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-      [s, s, s, s, s, s, s, s, s, s, s, s, s, s, s],
-   ],
-   [
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, G, b, s, s, s, s, s, s, s],
-      [G, G, G, G, G, G, b, s, s, s, s, s, s, s, s],
-      [G, G, G, G, G, b, s, s, s, s, s, s, s, s, s],
-      [b, b, b, b, b, s, s, s, s, s, b, b, b, b, b],
-      [s, s, s, s, s, s, s, s, s, b, G, G, G, G, G],
-      [s, s, s, s, s, s, s, s, b, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-      [s, s, s, s, s, s, s, b, G, G, G, G, G, G, G],
-   ],
-
-]
-
+// rotat 2d array right side (90 deg)
 function rotate2dArray(array) {
    let ary = array.slice();
    let row = ary.length;

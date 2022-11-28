@@ -1,149 +1,117 @@
-const FPS = 10;
-let windowWidth = window.innerWidth;
-let windowHeight = window.innerHeight;
-let size = windowWidth > windowHeight ? windowHeight : windowWidth;
-console.log(size);
-size = Math.floor(size / 100) * 100;
-console.log(size);
+const FPS = 5;
 const WIDTH = size;
 const HEIGHT = size;
+const animation = new Animation(FPS);
 
-const A = new Animation(FPS);
-canvasSize(WIDTH, HEIGHT);
+let showPossibles = true;
+
+
 
 const unit = 20;
+let board = [];
 
-let piecs = [];
-let floor = [];
+function isExisteAndUnCollapsed(i, j) {
+   return i >= 0 && i < unit && j >= 0 && j < unit && !board[i][j].collapsed;
+}
+function isExisteAndCollapsed(i, j) {
+   return i >= 0 && i < unit && j >= 0 && j < unit && board[i][j].collapsed;
+}
 
+function neighberUpdate(i, j) {
+   // top 
+   if (isExisteAndCollapsed(i - 1, j)) {
+      
+      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.top === board[i - 1][j].possibles[0].edegs.bottom);
+      board[i][j].out = true;
+   }
+   // right   
+   if (isExisteAndCollapsed(i, j + 1)) {
+      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.right === board[i][j + 1].possibles[0].edegs.left);
+      board[i][j].out = true;
+   }
+   // bottom
+   if (isExisteAndCollapsed(i + 1, j)) {
+      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.bottom === board[i + 1][j].possibles[0].edegs.top);
+      board[i][j].out = true;
+   }
+   // left
+   if (isExisteAndCollapsed(i, j - 1)) {
+      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.left === board[i][j - 1].possibles[0].edegs.right);
+      board[i][j].out = true;
+   }
+}
 
+function collapseAndUpdate(i, j) {
+   board[i][j].collapse();
+
+   // top neighber
+   if (isExisteAndUnCollapsed(i - 1, j)) {
+      neighberUpdate(i - 1, j);
+   }
+   // right neighber
+   if (isExisteAndUnCollapsed(i, j + 1)) {
+      neighberUpdate(i, j + 1);
+   }
+   // bottom neighber
+   if (isExisteAndUnCollapsed(i + 1, j)) {
+      neighberUpdate(i + 1, j);
+   }
+   // left neighber
+   if (isExisteAndUnCollapsed(i, j - 1)) {
+      neighberUpdate(i, j - 1);
+   }
+}
 
 function init() {
-   background(55);
-
    let w = WIDTH / unit;
    let h = HEIGHT / unit;
 
    for (let i = 0; i < unit; i++) {
+      board[i] = [];
       for (let j = 0; j < unit; j++) {
-         let magicIndex = (j * unit) + i;
-         floor[magicIndex] = new Piec(i * w, j * h, w, h, magicIndex, j);
+         board[i][j] = new Piec(j * w, i * h, w, h, images, i, j);
       }
    }
-   let rad = random(0, floor.length, true);
-   let rp = random(0, patterns.length, true);
-   let rri = random(0, 4, true);
+   const i = random(0, board.length, true);
+   const j = random(0, board[i].length, true);
 
-   floor[rad].use(patterns[rp], rri);
+   collapseAndUpdate(i, j);
 }
 
 init();
 
-
-
-// check naber is exsist or not
-function neighberExsist(index, checkUsed = false) {
-   if (!checkUsed) { return index >= 0 && index < floor.length };
-   return index >= 0 && index < floor.length && floor[index].isUse();
-}
-
-// match sides
-function matchArray(array1, array2) {
-   return array1.every((ary, i) => array2[i] === ary);
-}
-
-
-
-
-function piecPlace(piec) {
-   const offset = [-unit, 1, unit, -1];
-
-   let topIndex = piec.index + offset[0];
-   let rightIndex = piec.index + offset[1];
-   let bottomIndex = piec.index + offset[2];
-   let leftIndex = piec.index + offset[3];
-
-
-   let max = patterns.length;
-   let ran = random(0, max, true);
-   let len = 4;
-   let rndPiec;
-
-   for (let _i = ran, $ = 0; $ < max; _i = (_i + 1) % max, $++) {
-      rndPiec = patterns[_i];
-
-
-      for (let n = 0; n < len; n++) {
-         let every = true;
-
-         // (root) top - bottom  
-         if (
-            neighberExsist(topIndex, true) &&
-            !matchArray(rndPiec.edges[n][0], floor[topIndex].edges[floor[topIndex].ri][2])
-         ) every = false;
-
-         // (root) right - left
-         if (
-            neighberExsist(rightIndex, true) &&
-            !matchArray(rndPiec.edges[n][1], floor[rightIndex].edges[floor[rightIndex].ri][3])
-         ) every = false;
-
-         // (root) bottom - top
-         if (
-            neighberExsist(bottomIndex, true) &&
-            !matchArray(rndPiec.edges[n][2], floor[bottomIndex].edges[floor[bottomIndex].ri][0])
-         ) every = false;
-
-         // (root) left - right
-         if (
-            neighberExsist(leftIndex, true) &&
-            !matchArray(rndPiec.edges[n][3], floor[leftIndex].edges[floor[leftIndex].ri][1])
-         ) every = false;
-
-         if (every) {
-            piec.use(rndPiec, n);
-            return true;
+function drawAll() {
+   clrScr();
+   background(55);
+   board.forEach(brd => {
+      brd.forEach(b => {
+         b.draw()
+         if (showPossibles) {
+            b.showPossibles();
          }
-      }
-   }
-
+      });
+   })
 }
-
-
-
-
-
-// find place and put the match piec 
-function placePiec() {
-   let useIndex = floor.slice().filter(e => (!e.isUse() &&
-      (neighberExsist(e.index - 1, true) ||
-         neighberExsist(e.index + 1, true) ||
-         neighberExsist(e.index - unit, true) ||
-         neighberExsist(e.index + unit, true)))).map(e => e.index);
-
-   let rnd = random(0, useIndex.length, true);
-   let max = useIndex.length;
-
-   if (useIndex.length <= 0) return;
-   for (let _i = rnd, $ = 0; $ < max; _i = (_i + 1) % max, $++) {
-      if (piecPlace(floor[useIndex[_i]])) {
-         break;
-      }
-   }
-
-}
-
-
+drawAll();
 
 function animate() {
-   clrScr();
-
-   floor.forEach(flr => {
-      flr.draw();
+   // find place and put the match piec 
+   let cloneBoard = [];
+   board.forEach(brd => {
+      brd.forEach(b => { cloneBoard.push(b) });
    })
 
-   placePiec();
+   cloneBoard = cloneBoard.filter(e => !e.collapsed).sort((a, b) => a.possibles.length - b.possibles.length);
+   if (cloneBoard.length > 0) {
+      collapseAndUpdate(cloneBoard[0].i, cloneBoard[0].j);
+
+      // draw averything
+      drawAll();
+   }
 }
 
-A.start(animate);
+animation.start(animate);
+
+
+
 

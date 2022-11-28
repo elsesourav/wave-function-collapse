@@ -15,5 +15,8 @@ body {
    background: #2a2a3a;
 }
 .color {
-   color: #1a62ff;
+   color: #ffd700;
+}
+canvas {
+   background: #000000;
 }
