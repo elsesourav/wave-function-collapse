@@ -47,7 +47,7 @@ main {
 }
 main.active {
    position: fixed;
-   width: calc(var(--scale) * 35);
+   width: calc(var(--scale) * 30);
    height: calc(var(--scale) * 20);
    padding: calc(var(--scale) / 2);
    padding-bottom: calc(var(--scale));
@@ -199,7 +199,7 @@ main.active #options {
    position: relative;
    display: flex;
    justify-content: center;
-   gap: calc(var(--scale) * 4);
+   gap: calc(var(--scale) * 2);
    align-items: center;
 }
 #options .buttons input {
