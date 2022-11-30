@@ -1,14 +1,17 @@
-const FPS = 5;
 const WIDTH = size;
 const HEIGHT = size;
-const animation = new Animation(FPS);
+const MAPS = [worldMap]
 
+
+
+
+let fps = 0.5;
+let unit = 10;
 let showPossibles = true;
-
-
-
-const unit = 10;
+let currentMap = 0;
 let board = [];
+
+const animation = new Animation(fps);
 
 function isExisteAndUnCollapsed(i, j) {
    return i >= 0 && i < unit && j >= 0 && j < unit && !board[i][j].collapsed;
@@ -78,6 +81,7 @@ function init() {
    collapseAndUpdate(i, j);
 }
 
+createImages(MAPS[currentMap]);
 init();
 
 function drawAll() {
@@ -94,6 +98,13 @@ function drawAll() {
 }
 drawAll();
 
+function reset() {
+   board = [];
+   init();
+   drawAll();
+}
+
+
 function animate() {
    // find place and put the match piec 
    let cloneBoard = [];
@@ -104,7 +115,6 @@ function animate() {
    cloneBoard = cloneBoard.filter(e => !e.collapsed).sort((a, b) => a.possibles.length - b.possibles.length);
    if (cloneBoard.length > 0) {
       collapseAndUpdate(cloneBoard[0].i, cloneBoard[0].j);
-
       // draw averything
       drawAll();
    }
@@ -115,3 +125,58 @@ animation.start(animate);
 
 
 
+
+/* ----------- event listiner ----------- */
+const mainDiv = $("main");
+const menuButton = ID("menu-icon");
+const selectBlock = ID("select-block");
+const showPossiblesCheckbox = ID("show-possibles-checkbox");
+const speedRange = ID("speed-range");
+const sizeRange = ID("size-range");
+const speedShow = ID("speed-show");
+const sizeShow = ID("size-show");
+const stopButton = ID("stop");
+const startButton = ID("start");
+const restartButton = ID("restart");
+
+
+menuButton.addEventListener("click", e => {
+   mainDiv.classList.toggle("active");
+})
+
+showPossiblesCheckbox.addEventListener("click", e => {
+   showPossibles = e.target.checked;
+   drawAll();
+})
+
+speedRange.addEventListener("input", e => {
+   speedShow.innerText = fps = e.target.value / 2;
+   animation.fps = fps;
+})
+
+sizeRange.addEventListener("input", e => {
+   sizeShow.innerText = unit = e.target.value;
+   reset();
+})
+
+stopButton.addEventListener("click", () => {
+   animation.stop();
+})
+
+startButton.addEventListener("click", () => {
+   animation.start(animate);
+})
+
+restartButton.addEventListener("click", () => {
+   reset();
+})
+
+if (isMobile) {
+   cssRoot.style.setProperty("--cursor", "auto");
+}
+
+selectBlock.addEventListener("click", () => {
+   currentMap = selectBlock.selectedIndex;
+   createImages(MAPS[currentMap]);
+   reset();
+})

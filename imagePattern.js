@@ -14,7 +14,7 @@ const _l = 11; // #348C31 grass
 const _m = 12;
 
 
-const patterns = [
+const worldMap = [
     [
         [_i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i],
         [_i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i, _i],
@@ -255,25 +255,3 @@ const patterns = [
      ],
      
 ]
-// const patterns = [
-//     [
-//         [_a, _b, _a],
-//         [_a, _b, _a],
-//         [_a, _b, _a]
-//     ],
-//     [
-//         [_a, _b, _a],
-//         [_b, _b, _b],
-//         [_a, _b, _a]
-//     ],
-//     [
-//         [_a, _b, _a],
-//         [_b, _b, _b],
-//         [_a, _a, _a]
-//     ],
-//     [
-//         [_a, _a, _a],
-//         [_a, _a, _a],
-//         [_a, _a, _a]
-//     ] 
-// ]

@@ -1,18 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Wave Function Collapse</title>
-   <link rel="stylesheet" href="style.css">
-   <script defer src="utils.js"></script>
-   <script defer src="imagePattern.js"></script>
-   <script defer src="image.js"></script>
-   <script defer src="class.js"></script>
-   <script defer src="piecs.js"></script>
-   <script defer src="main.js"></script> 
-</head>
-<body>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wave Function Collapse</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="utils.js"></script>
+    <script defer src="imagePattern.js"></script>
+    <script defer src="image.js"></script>
+    <script defer src="piecs.js"></script>
+    <script defer src="main.js"></script>
+  </head>
+  <body>
+    <main >
+      <div id="menu-icon">
+         <span></span>
+         <span></span>
+         <span></span>
+      </div>
+      <div id="options">
+        <div class="title">MENU</div>
+        <div class="selection">
+          <select name="blocks" id="select-block">
+            <option class="option" value="world-map">World Map</option>
+            <option class="option" value="pcb-board">PCB Board</option>
+            <option class="option" value="world">World</option>
+            <option class="option" value="pcb-board">PCB Board</option>
+          </select>
+          <div class="checkbox">
+            <label for="show-possibles">Show Possibles</label>
+            <input type="checkbox" name="show-possibles" id="show-possibles-checkbox" checked>
+          </div>
+        </div>
+        <div class="speed-size">
+         <div class="row">
+            <label for="speed">Speed</label>
+            <input type="range" name="speed" value="1" id="speed-range"
+            max="200" min="1">
+            <span><p id="speed-show">0.5</p>fps</span>
+         </div>
+
+         <div class="row">
+            <label for="size">Size</label>
+            <input type="range" name="size" value="10" id="size-range"
+            max="100" min="2">
+            <span><p id="size-show">10</p>x</span>
+         </div>
+        </div>
+        <div class="buttons">
+         <input type="button" value="STOP" id="stop">
+         <input type="button" value="START" id="start">
+         <input type="button" value="RESTART" id="restart">
+        </div>
+      </div>
+    </main>
+  </body>
 </html>

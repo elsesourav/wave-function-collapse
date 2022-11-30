@@ -147,6 +147,9 @@ const moveTo = (x, y) => {
    ctx.moveTo(x, y);
 };
 
+const strokeRect = (x, y, w, h) => {
+   ctx.strokeRect(x, y, w, h);
+}
 const stroke = (red, green, blue, alpha) => {
    ctx.strokeStyle = __getColor__(red, green, blue, alpha);
    ctx.stroke();
@@ -211,6 +214,9 @@ const _$ = (givMe) => {
    };
    return self;
 };
+const $ = (givMe) => {
+   return self = document.querySelector(givMe);
+};
 
 // return Id
 const ID = (id) => {
@@ -254,8 +260,10 @@ const createEle = (elementName, className = null, appendParentName = null, inrHt
    return e;
 }
 
+//use cssRoot.style.setProperty("key", "value");
+const cssRoot = document.querySelector(':root');
 
-
+// when run this app in mobile is return true
 const isMobile = localStorage.mobile || window.navigator.maxTouchPoints > 1;
 function hover(element) {
    element.classList.add("hover-n");

@@ -63,7 +63,8 @@ function pushImage(pattern) {
     })
 }
 
-function createImages() {
+function createImages(patterns) {
+    images = [];
     patterns.forEach((pattern) => {
         let ptn = pattern.slice();
         let rotatePtn = rotate2dArray(ptn);
@@ -84,5 +85,4 @@ function createImages() {
         }
     });
 }
-createImages();
 
