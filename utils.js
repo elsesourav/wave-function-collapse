@@ -122,11 +122,6 @@ const scaleY = (y) => ctx.scale(0, y);
 const lineWidth = (width) => ctx.lineWidth = width;
 
 
-// const line = (sx, sy, ex, ey) => {
-//   ctx.moveTo(sx, sy);
-//   ctx.lineTo(ex, ey);
-// }
-
 const rounLline = (sx, sy, ex, ey, width = 1, lineDash = []) => {
    ctx.beginPath();
    ctx.lineWidth = width;

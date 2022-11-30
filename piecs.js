@@ -26,13 +26,15 @@ class Piec {
       if (!this.collapsed) {
          let textSize = this.width * this.height / 100;
          textSize = textSize > 50 ? 50 : textSize;
+         fillStyle("#ffffff");
          if (this.out) {
             fillStyle("#00ff00");
             fillRect(this.x, this.y, this.width, this.height);
+            fillStyle("#000000");
          }
          if (textSize > 1) {
-            fillStyle("#ffffff");
-            font(`${textSize}px sans-serif`)
+            
+            font(`bold ${textSize}px sans-serif`)
             text(this.possibles.length, this.x + this.width / 2, this.y + this.height / 1.5, this.width, this.height)
          }
       }
