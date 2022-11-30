@@ -40,7 +40,7 @@ main {
    backdrop-filter: blur(6px);
    border: solid calc(var(--scale) / 6) rgba(0, 0, 0, 0.5);
    border-radius: calc(var(--scale) / 2);
-   box-shadow: 0 0 calc(var(--scale) / 2) #000000;
+   outline: solid calc(var(--scale) / 2) #00000044;
    overflow: hidden;
    transition: width linear 0.3s, height linear 0.3s;
    padding: 0;
