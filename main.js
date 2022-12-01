@@ -1,14 +1,15 @@
 const WIDTH = size;
 const HEIGHT = size;
-const MAPS = [worldMap]
+const MAPS = [PCBMap, worldMap]
 
 
 
 
-let fps = 0.5;
+let fps = 10;
 let unit = 10;
 let showPossibles = true;
 let currentMap = 0;
+let backIndex = [];
 let board = [];
 
 const animation = new Animation(fps);
@@ -20,48 +21,55 @@ function isExisteAndCollapsed(i, j) {
    return i >= 0 && i < unit && j >= 0 && j < unit && board[i][j].collapsed;
 }
 
+function prePosition() {
+}
+
 function neighberUpdate(i, j) {
    // top 
    if (isExisteAndCollapsed(i - 1, j)) {
-      
-      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.top === board[i - 1][j].possibles[0].edegs.bottom);
-      board[i][j].out = true;
+      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.top === board[i - 1][j].used.edegs.bottom);
    }
    // right   
    if (isExisteAndCollapsed(i, j + 1)) {
-      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.right === board[i][j + 1].possibles[0].edegs.left);
-      board[i][j].out = true;
+      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.right === board[i][j + 1].used.edegs.left);
    }
    // bottom
    if (isExisteAndCollapsed(i + 1, j)) {
-      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.bottom === board[i + 1][j].possibles[0].edegs.top);
-      board[i][j].out = true;
+      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.bottom === board[i + 1][j].used.edegs.top);
    }
    // left
    if (isExisteAndCollapsed(i, j - 1)) {
-      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.left === board[i][j - 1].possibles[0].edegs.right);
-      board[i][j].out = true;
+      board[i][j].possibles = board[i][j].possibles.filter(img => img.edegs.left === board[i][j - 1].used.edegs.right);
    }
+
+   if (board[i][j].possibles.length === 0) {
+      animation.stop();
+      return false;
+   }
+   board[i][j].out = true;
+   return true;
 }
 
+
 function collapseAndUpdate(i, j) {
+   backIndex.push({i: i, j: j});
    board[i][j].collapse();
 
    // top neighber
    if (isExisteAndUnCollapsed(i - 1, j)) {
-      neighberUpdate(i - 1, j);
+      if (!neighberUpdate(i - 1, j)) return;
    }
    // right neighber
    if (isExisteAndUnCollapsed(i, j + 1)) {
-      neighberUpdate(i, j + 1);
+      if (!neighberUpdate(i, j + 1)) return;
    }
    // bottom neighber
    if (isExisteAndUnCollapsed(i + 1, j)) {
-      neighberUpdate(i + 1, j);
+      if (!neighberUpdate(i + 1, j)) return;
    }
    // left neighber
    if (isExisteAndUnCollapsed(i, j - 1)) {
-      neighberUpdate(i, j - 1);
+      if (!neighberUpdate(i, j - 1)) return;
    }
 }
 
@@ -86,7 +94,6 @@ init();
 
 function drawAll() {
    clrScr();
-   background(55);
    board.forEach(brd => {
       brd.forEach(b => {
          b.draw()
@@ -111,7 +118,6 @@ function animate() {
    board.forEach(brd => {
       brd.forEach(b => { cloneBoard.push(b) });
    })
-
    cloneBoard = cloneBoard.filter(e => !e.collapsed).sort((a, b) => a.possibles.length - b.possibles.length);
    if (cloneBoard.length > 0) {
       collapseAndUpdate(cloneBoard[0].i, cloneBoard[0].j);
@@ -175,7 +181,7 @@ if (isMobile) {
    cssRoot.style.setProperty("--cursor", "auto");
 }
 
-selectBlock.addEventListener("click", () => {
+selectBlock.addEventListener("change", () => {
    currentMap = selectBlock.selectedIndex;
    createImages(MAPS[currentMap]);
    reset();

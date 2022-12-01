@@ -3,7 +3,8 @@ const _ctx_ = _cvs_.getContext('2d');
 
 const colors = ["#000000", "#ffffff", "#ff0000", "#00ff00",
     "#0000ff", "#ffff00", "#00ffff", "#ff00ff",
-    "#bf9d85", "#1a62ff", "#ffd700", "#348C31"];
+    "#bf9d85", "#1a62ff", "#ffd700", "#008f26",
+    "#bab8b8", "#202020"];
 
 const patternToImage = (pattern) => {
     const pattern_ = pattern.slice();

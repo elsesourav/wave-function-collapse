@@ -6,6 +6,7 @@ class Piec {
       this.width = width;
       this.height = height;
       this.possibles = images;
+      this.used = []
       this.collapsed = false;
       this.i = i;
       this.j = j;
@@ -14,8 +15,8 @@ class Piec {
 
    draw() {
       if (this.collapsed) {
-         drawImage(this.possibles[0].img, this.x, this.y, this.width, this.height);
-      }else {
+         drawImage(this.used.img, this.x, this.y, this.width, this.height);
+      } else {
          lineWidth(1);
          strokeStyle(255, 255, 255);
          strokeRect(this.x, this.y, this.width, this.height);
@@ -24,16 +25,21 @@ class Piec {
 
    showPossibles() {
       if (!this.collapsed) {
+         clearRect(this.x, this.y, this.width, this.height)
          let textSize = this.width * this.height / 100;
          textSize = textSize > 50 ? 50 : textSize;
          fillStyle("#ffffff");
+
          if (this.out) {
-            fillStyle("#00ff00");
-            fillRect(this.x, this.y, this.width, this.height);
-            fillStyle("#000000");
+            for(let i = 0; i < this.possibles.length; i++) {
+               save();
+               globalAlpha(0.3); 
+               drawImage(this.possibles[i].img, this.x, this.y, this.width, this.height);
+               restore();
+            }
          }
          if (textSize > 1) {
-            
+            fillStyle("#ffffff");
             font(`bold ${textSize}px sans-serif`)
             text(this.possibles.length, this.x + this.width / 2, this.y + this.height / 1.5, this.width, this.height)
          }
@@ -41,14 +47,17 @@ class Piec {
    }
 
 
-   collapse() {
-      let rnd = random(0, this.possibles.length, true);
-      this.possibles = [this.possibles[rnd]];
+   collapse(index = undefined) {
+      let rnd = index !== undefined ? index : random(0, this.possibles.length, true);
+      this.used = [this.possibles[rnd]][0];
       this.collapsed = true;
    }
 
-   isSelected() {
-      return this.collapsed;
+   reset(images) {
+      this.images = images;
+      this.collapsed = false;
+      this.out = false;
+      this.used = [];
    }
 }
 

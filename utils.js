@@ -181,7 +181,7 @@ const arc = (x, y, r, fill = true, lineWidth = 0) => {
    lineWidth && ctx.stroke();
    ctx.closePath();
 }
-
+const globalAlpha = (alpha) => ctx.globalAlpha = alpha;
 const getImageData = (sx, sy, sw, sh) => ctx.getImageData(sx, sy, sw, sh);
 const putImageData = (image, dx, dy) => ctx.putImageData(image, dx, dy);
 const toDataURL = () => ctx.toDataURL("image/jpeg");

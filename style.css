@@ -22,11 +22,8 @@ body {
    overflow: hidden;
    background: #2a2a3a;
 }
-.color {
-   color: #ffd700;
-}
 canvas {
-   background: #000000;
+   background: #008f0e;
    box-shadow: 0 0 calc(var(--scale) / 2) #000000;
 }
 main {
@@ -212,4 +209,10 @@ main.active #options {
    border-bottom: solid calc(var(--scale) / 4) #5a5a5a;
    outline: none;
    cursor: var(--cursor);
+}
+
+
+
+.color {
+   color:#202020;
 }
