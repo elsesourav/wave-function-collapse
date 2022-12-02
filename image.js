@@ -2,9 +2,9 @@ const _cvs_ = document.createElement("canvas");
 const _ctx_ = _cvs_.getContext('2d');
 
 const colors = ["#000000", "#ffffff", "#ff0000", "#00ff00",
-    "#0000ff", "#ffff00", "#00ffff", "#ff00ff",
-    "#bf9d85", "#1a62ff", "#ffd700", "#008f26",
-    "#bab8b8", "#202020"];
+    "#0000ff", "#ffff00", "#30ff3e", "#ff00ff",
+    "#a39268", "#1a62ff", "#ffd700", "#00980a",
+    "#bab8b8", "#202020", "#c0c0c0", "#808080"];
 
 const patternToImage = (pattern) => {
     const pattern_ = pattern.slice();
