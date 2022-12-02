@@ -15,6 +15,7 @@ class Piec {
 
    draw() {
       if (this.collapsed) {
+         clearRect(this.x, this.y, this.width, this.height);
          drawImage(this.used.img, this.x, this.y, this.width, this.height);
       } else {
          lineWidth(1);
@@ -25,15 +26,15 @@ class Piec {
 
    showPossibles() {
       if (!this.collapsed) {
-         clearRect(this.x, this.y, this.width, this.height)
          let textSize = this.width * this.height / 100;
          textSize = textSize > 50 ? 50 : textSize;
          fillStyle("#ffffff");
-
+         
          if (this.out) {
+            clearRect(this.x, this.y, this.width, this.height)
             for(let i = 0; i < this.possibles.length; i++) {
                save();
-               globalAlpha(0.3); 
+               globalAlpha(0.1); 
                drawImage(this.possibles[i].img, this.x, this.y, this.width, this.height);
                restore();
             }
@@ -54,7 +55,7 @@ class Piec {
    }
 
    reset(images) {
-      this.images = images;
+      this.possibles = images.slice();
       this.collapsed = false;
       this.out = false;
       this.used = [];
