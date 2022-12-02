@@ -36,7 +36,6 @@ function resetPiec(i, j) {
    neighberUpdate(i, j + 1);
 }
 
-
 function neighberUpdate(i, j) {
    if (!isExisteAndUnCollapsed(i, j)) return true;
    let array = board[i][j].possibles;
@@ -79,7 +78,6 @@ function _update_(i, j) {
       !neighberUpdate(i, j - 1)    // left neighber
    )  return;
 }
-
 
 function collapseAndUpdate(i, j) {
    board[i][j].collapse();
@@ -140,8 +138,6 @@ function animate() {
 }
 
 animation.start(animate);
-
-
 
 
 
