@@ -9,7 +9,6 @@
    box-sizing: border-box;
    touch-action: none;
    user-select: none;
-   /* outline: solid 1px #f00; */
    font-weight: bold;
    font-family: cursive;
 }
@@ -210,6 +209,17 @@ main.active #options {
    cursor: var(--cursor);
 }
 
+#copyright {
+   position: absolute;
+   font-size: calc(var(--scale) * 1.5);
+   right: calc(var(--scale));
+   bottom: calc(var(--scale));
+}
+#copyright > *, #copyright{
+   font-family: sans-serif;
+   font-weight: 900;
+   color: #000000;
+}
 
 
 .color {

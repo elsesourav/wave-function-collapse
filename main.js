@@ -1,9 +1,6 @@
 const WIDTH = size;
 const HEIGHT = size;
-const MAPS = [PCBMap, worldMap]
-
-
-
+const MAPS = [PCBMap, worldMap, LineMap]
 
 let fps = 10;
 let unit = 10;
